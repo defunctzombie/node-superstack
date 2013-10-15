@@ -1,0 +1,31 @@
+{
+  "name": "superstack",
+  "version": "0.0.0",
+  "description": "long stack traces for node.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --ui tdd --reporter list"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/defunctzombie/node-superstack.git"
+  },
+  "keywords": [
+    "stacktrace",
+    "long",
+    "stack",
+    "trace"
+  ],
+  "author": "Roman Shtylman <shtylman@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/defunctzombie/node-superstack/issues"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "after": "~0.8.1"
+  }
+}
