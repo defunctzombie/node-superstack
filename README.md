@@ -62,7 +62,9 @@ If you find an instance of async usage that is not properly captured, please ope
 
 ## References
 
-Thanks to [https://github.com/mattinsler/longjohn]() and [https://github.com/tlrobinson/long-stack-traces]() for the ideas and code. Longjohn code is MIT licensed.
+Thanks to [mattinsler/longjohn](https://github.com/mattinsler/longjohn) and [tlrobinson/long-stack-traces](https://github.com/tlrobinson/long-stack-traces) for the ideas and code. Longjohn code is MIT licensed.
+
+Also relevant a pdf on the initial idea of [long stack traces](http://nodejs.org/illuminati0.pdf) via an EventSource.
 
 ## License
 
