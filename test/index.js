@@ -22,7 +22,7 @@ test('errors from other modules', function(done) {
     });
 });
 
-test('issue #10', function(done) {
+test('function inside timeout', function(done) {
     var a = function() {
         b();
     };
@@ -35,7 +35,7 @@ test('issue #10', function(done) {
     setTimeout(a, 0);
 });
 
-test('issue #10-2', function(done) {
+test('nested timeouts', function(done) {
     var a = function() {
         setTimeout(b, 0);
     }
@@ -88,7 +88,7 @@ test('EventEmitter.removeListener', function() {
 
     emitter.on('foo', foo);
     emitter.on('foo', foo);
-    emitter.removeListener('foo', foo);
+    assert.equal(emitter.removeListener('foo', foo), emitter);
 
     emitter.emit('foo');
     assert.equal(count, 1);
@@ -100,8 +100,8 @@ test('EventEmitter.listeners', function() {
 
     var emitter = new EventEmitter();
 
-    emitter.on('foo', foo1);
-    emitter.on('foo', foo2);
+    assert.equal(emitter.on('foo', foo1), emitter);
+    assert.equal(emitter.on('foo', foo2), emitter);
 
     var listeners = emitter.listeners('foo');
     assert.equal(listeners.length, 2);
@@ -110,17 +110,12 @@ test('EventEmitter.listeners', function() {
 });
 
 test('setTimeout', function(done) {
-    setTimeout(function() {
+    var timeout_id = setTimeout(function() {
         assert.equal(new Error('foobar').stack.split(superstack.empty_frame).length, 2)
-        done();
-    }, 1);
-});
-
-test('setTimeout args', function(done) {
-    setTimeout(function() {
         assert.deepEqual(Array.prototype.slice.call(arguments), [1, 2, 3])
         done();
     }, 1, 1, 2, 3);
+    assert(timeout_id);
 });
 
 test('setInterval', function(done) {
@@ -133,6 +128,7 @@ test('setInterval', function(done) {
         assert.deepEqual(Array.prototype.slice.call(arguments), [1, 2, 3]);
         step();
     }, 5, 1, 2, 3);
+    assert(interval_id);
 });
 
 test('setImmediate', function(done) {

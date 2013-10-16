@@ -56,9 +56,11 @@ The following calls are intercepted.
 * setInterval
 * setImmediate
 
-## issues
+## testing
 
-If you find an instance of async usage that is not properly captured, please open an issue and provide a testcase to reproduce.
+If you find an instance of usage that is not properly captured, please open an issue and provide a testcase to reproduce.
+
+The usual `npm test` can be run. A more rigorous set of tests can be run by running the `runme.sh` script in `test/modules`. It will clone a few popular node.js repos and run their test suits with superstack enabled. This helps ensure that there are limited side effects.
 
 ## References
 

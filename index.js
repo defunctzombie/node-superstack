@@ -87,6 +87,7 @@ var limit_frames = function(stack) {
 
 // wrap a callback to capture any error or throw and thus the stacktrace
 var wrap_callback = function(callback, location) {
+    // capture current error location
     var trace_error = new Error();
     trace_error.id = ERROR_ID++;
     trace_error.__location__ = location;
@@ -96,14 +97,9 @@ var wrap_callback = function(callback, location) {
     var new_callback = function() {
         current_trace_error = trace_error;
         trace_error = null;
-        try {
-            return callback.apply(this, arguments);
-        } catch (e) {
-            e.stack;
-            throw e;
-        } finally {
-            current_trace_error = null;
-        }
+        var res = callback.apply(this, arguments);
+        current_trace_error = null;
+        return res;
     };
     new_callback.__original_callback__ = callback;
     return new_callback;
@@ -119,7 +115,7 @@ var listeners = EventEmitter.prototype.listeners;
 EventEmitter.prototype.addListener = function(event, callback) {
     var args = Array.prototype.slice.call(arguments);
     args[1] = wrap_callback(callback, 'EventEmitter.addListener');
-    addListener.apply(this, args);
+    return addListener.apply(this, args);
 };
 
 EventEmitter.prototype.on = EventEmitter.prototype.addListener;
@@ -127,7 +123,7 @@ EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 EventEmitter.prototype.once = function(event, callback) {
     var args = Array.prototype.slice.call(arguments);
     args[1] = wrap_callback(callback, 'EventEmitter.once');
-    once.apply(this, args);
+    return once.apply(this, args);
 };
 
 EventEmitter.prototype.removeListener = function(event, callback) {
@@ -180,13 +176,13 @@ var nextDomainTick = process._nextDomainTick;
 process.nextTick = function(callback) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = wrap_callback(callback, 'process.nextTick')
-    nextTick.apply(this, args)
+    return nextTick.apply(this, args)
 };
 
 process._nextDomainTick = function(callback) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = wrap_callback(callback, 'process.nextDomainTick')
-    nextDomainTick.apply(this, args)
+    return nextDomainTick.apply(this, args)
 };
 
 /// timeout shims
@@ -198,19 +194,19 @@ var setImmediate = global.setImmediate;
 global.setTimeout = function(callback) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = wrap_callback(callback, 'global.setTimeout')
-    setTimeout.apply(this, args)
-}
+    return setTimeout.apply(this, args);
+};
 
 global.setInterval = function(callback) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = wrap_callback(callback, 'global.setInterval')
-    setInterval.apply(this, args)
+    return setInterval.apply(this, args);
 };
 
 global.setImmediate = function(callback) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = wrap_callback(callback, 'global.setImmediate')
-    setImmediate.apply(this, args)
+    return setImmediate.apply(this, args);
 };
 
 Error.prepareStackTrace = prepareStackTrace;
