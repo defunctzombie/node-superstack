@@ -1,6 +1,6 @@
 {
   "name": "superstack",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "long stack traces for node.js",
   "main": "index.js",
   "directories": {
