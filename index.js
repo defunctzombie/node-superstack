@@ -86,11 +86,10 @@ var limit_frames = function(stack) {
 };
 
 // wrap a callback to capture any error or throw and thus the stacktrace
-var wrap_callback = function(callback, location) {
+var wrap_callback = function(callback) {
     // capture current error location
     var trace_error = new Error();
     trace_error.id = ERROR_ID++;
-    trace_error.__location__ = location;
     trace_error.__previous__ = current_trace_error;
     trace_error.__trace_count__ = current_trace_error ? current_trace_error.__trace_count__ + 1 : 1;
     limit_frames(trace_error);
