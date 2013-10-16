@@ -14,9 +14,41 @@ Just require `superstack` in your project. Ideally one of the first requires (se
 
 ```js
 var superstack = require('superstack');
+
+function f () {
+    throw new Error('foo');
+}
+setTimeout(f, Math.random());
+setTimeout(f, Math.random());
 ```
 
-Your stack traces will now extend beyond async call boundaries.
+Your stack traces will now extend beyond async call boundaries. From the code above.
+
+Before superstack
+```
+Error: foo
+    at f [as _onTimeout] (.../node-superstack/foobar.js:2:11)
+    at Timer.listOnTimeout [as ontimeout] (timers.js:110:15)
+```
+
+We have no idea which `setTimeout` call actually caused the error.
+
+After
+```
+Error: foo
+    at f (/Users/shtylman/projects/node-superstack/foobar.js:4:11)
+    at Timer.listOnTimeout [as ontimeout] (timers.js:110:15)
+    at Object.<anonymous> (/Users/shtylman/projects/node-superstack/foobar.js:7:1)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+    at Function.Module.runMain (module.js:497:10)
+    at startup (node.js:119:16)
+    at node.js:901:3
+```
+
+Notice that the stacktrace identifies which of the two `setTimeout` fired first and this caused the error.
 
 ### options
 
