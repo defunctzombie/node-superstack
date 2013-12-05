@@ -1,4 +1,4 @@
-# superstack
+# superstack [![Build Status](https://travis-ci.org/defunctzombie/node-superstack.png?branch=master)](https://travis-ci.org/defunctzombie/node-superstack)
 
 long stack traces for node.js over async/io boundaries
 
