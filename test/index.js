@@ -131,10 +131,12 @@ test('setInterval', function(done) {
     assert(interval_id);
 });
 
-test('setImmediate', function(done) {
-    var immediate_id = setImmediate(function() {
-        assert.deepEqual(Array.prototype.slice.call(arguments), [1, 2, 3]);
-        clearImmediate(immediate_id);
-        done();
-    }, 1, 2, 3);
-});
+if (global.setImmediate) {
+    test('setImmediate', function(done) {
+        var immediate_id = setImmediate(function() {
+            assert.deepEqual(Array.prototype.slice.call(arguments), [1, 2, 3]);
+            clearImmediate(immediate_id);
+            done();
+        }, 1, 2, 3);
+    });
+}

@@ -137,15 +137,15 @@ EventEmitter.prototype.removeListener = function(event, callback) {
             return poss1 && (poss1 === callback || (poss1.listener && poss1.listener.__original_callback__ === callback)) || (poss2 && poss2.__original_callback__ === callback);
         };
 
-        var listeners = self._events[event];
-        if (!listeners) {
+        var handlers = listeners.call(self, event);
+        if (!handlers) {
             return null;
         }
         // find the correct callback from the listeners array
-        else if (Array.isArray(listeners)) {
-            return listeners.filter(is_callback)[0];
+        else if (Array.isArray(handlers)) {
+            return handlers.filter(is_callback)[0];
         }
-        else if (is_callback(listeners)) {
+        else if (is_callback(handlers)) {
             return self._events[event];
         }
 
@@ -202,10 +202,13 @@ global.setInterval = function(callback) {
     return setInterval.apply(this, args);
 };
 
-global.setImmediate = function(callback) {
-    var args = Array.prototype.slice.call(arguments);
-    args[0] = wrap_callback(callback, 'global.setImmediate')
-    return setImmediate.apply(this, args);
-};
+// node >= 0.10
+if (setImmediate) {
+    global.setImmediate = function(callback) {
+        var args = Array.prototype.slice.call(arguments);
+        args[0] = wrap_callback(callback, 'global.setImmediate')
+        return setImmediate.apply(this, args);
+    };
+}
 
 Error.prepareStackTrace = prepareStackTrace;
