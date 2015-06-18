@@ -167,48 +167,33 @@ EventEmitter.prototype.listeners = function(event) {
     });
 };
 
+// Generic library wrapper: wraps all callbacks passed to any methods
+var wrap_library = function (lib, libName, whitelist) {
+    for (var i in lib) {
+        if (lib.hasOwnProperty(i) && typeof lib[i] === 'function' && (typeof whitelist === 'undefined' || whitelist.indexOf(i) !== -1)) {
+            (function (i) {
+                var original = lib[i];
+                lib[i] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    for (var j = 0; j < args.length; ++j) {
+                        if (typeof args[j] === 'function') {
+                            args[j] = wrap_callback(args[j], libName + '.' + i);
+                        }
+                    }
+                    return original.apply(this, args);
+                };
+            })(i);
+        }
+    }
+};
+
 /// process shims
-
-var nextTick = process.nextTick;
-var nextDomainTick = process._nextDomainTick;
-
-process.nextTick = function(callback) {
-    var args = Array.prototype.slice.call(arguments);
-    args[0] = wrap_callback(callback, 'process.nextTick')
-    return nextTick.apply(this, args)
-};
-
-process._nextDomainTick = function(callback) {
-    var args = Array.prototype.slice.call(arguments);
-    args[0] = wrap_callback(callback, 'process.nextDomainTick')
-    return nextDomainTick.apply(this, args)
-};
+wrap_library(process, 'process');
 
 /// timeout shims
+wrap_library(global, 'global', ['setTimeout', 'setInterval', 'setImmediate']);
 
-var setTimeout = global.setTimeout;
-var setInterval = global.setInterval;
-var setImmediate = global.setImmediate;
-
-global.setTimeout = function(callback) {
-    var args = Array.prototype.slice.call(arguments);
-    args[0] = wrap_callback(callback, 'global.setTimeout')
-    return setTimeout.apply(this, args);
-};
-
-global.setInterval = function(callback) {
-    var args = Array.prototype.slice.call(arguments);
-    args[0] = wrap_callback(callback, 'global.setInterval')
-    return setInterval.apply(this, args);
-};
-
-// node >= 0.10
-if (setImmediate) {
-    global.setImmediate = function(callback) {
-        var args = Array.prototype.slice.call(arguments);
-        args[0] = wrap_callback(callback, 'global.setImmediate')
-        return setImmediate.apply(this, args);
-    };
-}
+// core lib shims
+wrap_library(require('fs'), 'fs');
 
 Error.prepareStackTrace = prepareStackTrace;
