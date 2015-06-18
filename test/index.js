@@ -13,13 +13,15 @@ test('normal throw', function() {
     });
 });
 
-test('errors from other modules', function(done) {
+test('errors inside fs', function(done) {
 
     fs.readFile('not_there.txt', 'utf8', function (err, text) {
         assert(err instanceof Error);
-        assert.equal(err.stack, 'Error: ENOENT, open \'not_there.txt\'');
+        assert.ok(err.stack.indexOf('Error: ENOENT, open \'not_there.txt\'') === 0);
+        assert.equal(err.stack.split("\n").length, 11);
         done();
     });
+
 });
 
 test('function inside timeout', function(done) {
